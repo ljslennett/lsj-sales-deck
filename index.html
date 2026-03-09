@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>International Tax Strategy - LSJ Tax</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --charcoal: #1a1a1f;
+    --charcoal-deep: #111114;
+    --charcoal-mid: #2a2a30;
+    --slate: #35353d;
+    --gold: #b9a06a;
+    --gold-light: #cdb87e;
+    --gold-bright: #d4bc82;
+    --gold-dim: rgba(185, 160, 106, 0.45);
+    --gold-muted: rgba(185, 160, 106, 0.12);
+    --cream: #f5f3ee;
+    --cream-warm: #edeae2;
+    --white: #ffffff;
+    --text-dark: #1a1a1a;
+    --text-mid: #55555e;
+    --text-light: #8a8a92;
+    --red-muted: #a0404a;
+    --red-light: #c97070;
+    --serif: 'Cormorant Garamond', 'Georgia', serif;
+    --sans: 'Inter', 'Helvetica Neue', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+  html { scroll-behavior: smooth; scroll-snap-type: y mandatory; overflow-y: scroll; }
+  body { background: var(--charcoal-deep); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+
+  .slide {
+    width: 100vw; height: 100vh; min-height: 720px;
+    position: relative; overflow: hidden;
+    scroll-snap-align: start;
+    display: flex;
+  }
+  .slide-inner {
+    width: 1280px; height: 720px;
+    margin: auto;
+    position: relative; overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(185,160,106,0.03);
+  }
+
+  @page { size: 1280px 720px; margin: 0; }
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+    html { scroll-snap-type: none; }
+    body { background: none !important; margin: 0; }
+    .slide { width: 1280px; height: 720px; min-height: 720px; margin: 0; }
+    .slide-inner { width: 1280px; height: 720px; margin: 0; box-shadow: none; page-break-after: always; page-break-inside: avoid; }
+    .slide-inner:last-child { page-break-after: auto; }
+    .anim { opacity: 1 !important; transform: none !important; }
+    .nav-dots, .kb-hint { display: none !important; }
+  }
+
+  /* ── Animations ── */
+  .anim { opacity: 0; transform: translateY(14px); transition: opacity 0.6s cubic-bezier(0.23, 1, 0.32, 1), transform 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+  .slide-inner.visible .anim { opacity: 1; transform: translateY(0); }
+  .slide-inner.visible .d1 { transition-delay: 0.1s; }
+  .slide-inner.visible .d2 { transition-delay: 0.2s; }
+  .slide-inner.visible .d3 { transition-delay: 0.3s; }
+  .slide-inner.visible .d4 { transition-delay: 0.4s; }
+  .slide-inner.visible .d5 { transition-delay: 0.5s; }
+  .slide-inner.visible .d6 { transition-delay: 0.6s; }
+  .slide-inner.visible .d7 { transition-delay: 0.7s; }
+  .slide-inner.visible .d8 { transition-delay: 0.8s; }
+
+  @keyframes pulse { 0%,100% { transform: scale(1); opacity: 0.15; } 50% { transform: scale(2.2); opacity: 0; } }
+  .map-pulse { animation: pulse 3s ease-in-out infinite; transform-origin: center; }
+  .map-pulse.p2 { animation-delay: 1s; }
+  .map-pulse.p3 { animation-delay: 2s; }
+
+  @keyframes lineGrow { from { width: 0; } to { width: 50px; } }
+  @keyframes gentleFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+
+  .section-label { font-family: var(--sans); font-size: 10px; font-weight: 600; color: var(--gold); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 22px; }
+  .page-num { position: absolute; bottom: 28px; right: 38px; font-family: var(--sans); font-size: 10px; font-weight: 400; color: rgba(255,255,255,0.12); letter-spacing: 1px; }
+  .page-num-dark { color: rgba(26,26,31,0.08); }
+  .brand-mark { position: absolute; bottom: 28px; left: 38px; font-family: var(--serif); font-size: 10px; font-weight: 400; letter-spacing: 3px; text-transform: uppercase; opacity: 0.08; color: var(--white); }
+  .brand-mark-dark { color: var(--charcoal); }
+
+  /* ── Nav dots ── */
+  .nav-dots { position: fixed; right: 28px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 12px; }
+  .nav-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(185,160,106,0.15); border: 1px solid rgba(185,160,106,0.20); cursor: pointer; transition: all 0.3s; }
+  .nav-dot:hover { background: rgba(185,160,106,0.35); }
+  .nav-dot.active { background: var(--gold); border-color: var(--gold); box-shadow: 0 0 12px rgba(185,160,106,0.3); }
+  .kb-hint { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); font-family: var(--sans); font-size: 10px; color: rgba(185,160,106,0.25); letter-spacing: 2px; text-transform: uppercase; z-index: 100; transition: opacity 0.5s; pointer-events: none; }
+
+  /* ═══ SLIDE 1: COVER ═══ */
+  .s-cover { background: var(--charcoal-deep); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+  .s-cover::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 35%, rgba(185,160,106,0.06) 0%, transparent 55%), radial-gradient(ellipse at 20% 80%, rgba(185,160,106,0.02) 0%, transparent 30%); }
+  .s-cover::after { content: ''; position: absolute; top: 24px; left: 24px; right: 24px; bottom: 24px; border: 1px solid rgba(185,160,106,0.04); pointer-events: none; }
+  .cover-map { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 900px; height: 500px; opacity: 0.04; }
+  .cover-logo { font-family: var(--serif); font-size: 16px; font-weight: 300; color: var(--white); letter-spacing: 8px; text-transform: uppercase; position: relative; z-index: 1; opacity: 0.25; margin-bottom: 50px; }
+  .cover-logo span { color: var(--gold); opacity: 1; }
+  .cover-accent { width: 50px; height: 1px; background: var(--gold); margin-bottom: 38px; position: relative; z-index: 1; }
+  .slide-inner.visible .cover-accent { animation: lineGrow 0.8s ease forwards; }
+  .cover-title { font-family: var(--serif); font-size: 48px; font-weight: 300; color: var(--white); letter-spacing: 0.5px; line-height: 1.22; position: relative; z-index: 1; max-width: 820px; }
+  .cover-title em { font-style: italic; color: var(--gold); }
+  .cover-subtitle { font-family: var(--sans); font-size: 15px; font-weight: 300; color: rgba(255,255,255,0.28); letter-spacing: 0.3px; margin-top: 30px; position: relative; z-index: 1; max-width: 480px; line-height: 1.8; }
+  .cover-social-proof { display: flex; gap: 44px; margin-top: 52px; position: relative; z-index: 1; }
+  .cover-stat { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .cover-stat-num { font-family: var(--serif); font-size: 24px; font-weight: 400; color: var(--gold); }
+  .cover-stat-lbl { font-family: var(--sans); font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.16); letter-spacing: 2px; text-transform: uppercase; }
+
+  /* ═══ SLIDE 2: THE PROBLEM ═══ */
+  .s-wrong { background: var(--charcoal); display: flex; position: relative; }
+  .s-wrong::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 80% 30%, rgba(185,160,106,0.025) 0%, transparent 45%); }
+  .wrong-left { width: 40%; display: flex; flex-direction: column; justify-content: center; padding: 70px 50px; position: relative; z-index: 1; }
+  .wrong-left::after { content: ''; position: absolute; top: 50%; right: -1px; transform: translateY(-50%); width: 1px; height: 120px; background: var(--gold); }
+  .wrong-heading { font-family: var(--serif); font-size: 34px; font-weight: 300; color: var(--white); line-height: 1.3; }
+  .wrong-heading em { font-style: italic; color: var(--gold); }
+  .wrong-subtext { font-family: var(--sans); font-size: 13px; font-weight: 300; color: rgba(255,255,255,0.28); line-height: 1.85; margin-top: 24px; }
+  .wrong-right { width: 60%; display: flex; flex-direction: column; justify-content: center; padding: 50px 60px; position: relative; z-index: 1; }
+  .wrong-misconceptions { margin-bottom: 36px; }
+  .wrong-item { display: flex; align-items: center; gap: 20px; padding: 20px 22px; border-bottom: 1px solid rgba(185,160,106,0.05); transition: background 0.3s; }
+  .wrong-item:hover { background: rgba(160,64,74,0.03); }
+  .wrong-item:first-child { border-top: 1px solid rgba(185,160,106,0.05); }
+  .wrong-x-circle { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(160,64,74,0.25); display: flex; align-items: center; justify-content: center; background: rgba(160,64,74,0.04); }
+  .wrong-x { font-family: var(--sans); font-size: 14px; font-weight: 500; color: var(--red-muted); line-height: 1; }
+  .wrong-text { font-family: var(--sans); font-size: 15px; font-weight: 400; color: rgba(255,255,255,0.55); }
+  .wrong-diagram-wrap { padding: 8px 0 0; }
+  .wrong-diagram-label { font-family: var(--sans); font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.15); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 16px; text-align: center; }
+  .wrong-diagram { display: flex; align-items: center; justify-content: center; }
+  .wrong-node { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .wrong-node-circle { width: 58px; height: 58px; border-radius: 50%; border: 1px solid rgba(185,160,106,0.15); display: flex; align-items: center; justify-content: center; background: rgba(185,160,106,0.025); }
+  .wrong-node-label { font-family: var(--sans); font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.25); letter-spacing: 1.5px; text-transform: uppercase; }
+  .wrong-arrow-svg { margin: 0 6px; padding-bottom: 24px; }
+
+  /* ═══ SLIDE 3: WHAT'S AT STAKE ═══ */
+  .s-stake { background: var(--charcoal-deep); display: flex; flex-direction: column; padding: 56px 80px; position: relative; }
+  .s-stake::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 30%, rgba(185,160,106,0.04) 0%, transparent 55%); }
+  .stake-header { position: relative; z-index: 1; margin-bottom: 40px; }
+  .stake-heading { font-family: var(--serif); font-size: 36px; font-weight: 300; color: var(--white); margin-top: 10px; }
+  .stake-cols { display: flex; gap: 0; position: relative; z-index: 1; margin-bottom: 28px; }
+  .stake-col { flex: 1; padding: 30px 34px; position: relative; text-align: center; }
+  .stake-col:not(:last-child)::after { content: ''; position: absolute; top: 50%; right: 0; transform: translateY(-50%); width: 1px; height: 55%; background: rgba(185,160,106,0.15); }
+  .stake-col .lbl { font-family: var(--sans); font-size: 10px; font-weight: 600; color: var(--gold); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 16px; }
+  .stake-col .num { font-family: var(--serif); font-size: 54px; font-weight: 300; line-height: 1; margin-bottom: 14px; }
+  .stake-col .num.red { color: var(--red-light); }
+  .stake-col .num.gold { color: var(--gold); }
+  .stake-col .per-month { font-family: var(--sans); font-size: 12px; font-weight: 500; color: rgba(200,112,112,0.6); margin-bottom: 12px; }
+  .stake-col .desc { font-family: var(--sans); font-size: 12.5px; font-weight: 300; color: rgba(255,255,255,0.38); line-height: 1.75; }
+  .stake-bottom { position: relative; z-index: 1; padding: 22px 30px; background: rgba(185,160,106,0.06); border-left: 3px solid var(--gold); border-radius: 0 3px 3px 0; }
+  .stake-bottom p { font-family: var(--sans); font-size: 13.5px; font-weight: 400; color: var(--white); line-height: 1.7; }
+  .stake-bottom strong { color: var(--gold); font-weight: 500; }
+
+  /* ═══ SLIDE 4: THE VISION ═══ */
+  .s-vision { background: var(--cream); display: flex; position: relative; overflow: hidden; }
+  .s-vision::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 80% 50%, rgba(185,160,106,0.08) 0%, transparent 50%); }
+  .vision-left { width: 50%; display: flex; flex-direction: column; justify-content: center; padding: 70px 60px 70px 80px; position: relative; z-index: 1; }
+  .vision-left::after { content: ''; position: absolute; top: 50%; right: 0; transform: translateY(-50%); width: 1px; height: 140px; background: var(--gold); }
+  .vision-heading { font-family: var(--serif); font-size: 38px; font-weight: 300; color: var(--charcoal); line-height: 1.25; margin-top: 10px; }
+  .vision-heading em { font-style: italic; color: var(--gold); }
+  .vision-text { font-family: var(--sans); font-size: 14px; font-weight: 300; color: var(--text-mid); line-height: 1.85; margin-top: 26px; }
+  .vision-right { width: 50%; display: flex; flex-direction: column; justify-content: center; padding: 70px 80px 70px 60px; position: relative; z-index: 1; }
+  .vision-items { display: flex; flex-direction: column; gap: 0; }
+  .vision-item { display: flex; align-items: center; gap: 22px; padding: 22px 0; border-bottom: 1px solid rgba(185,160,106,0.12); }
+  .vision-item:first-child { border-top: 1px solid rgba(185,160,106,0.12); }
+  .vision-icon { width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(185,160,106,0.22); display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: rgba(185,160,106,0.04); }
+  .vision-icon svg { width: 20px; height: 20px; }
+  .vision-item-content {}
+  .vision-item-title { font-family: var(--serif); font-size: 17px; font-weight: 600; color: var(--charcoal); margin-bottom: 3px; }
+  .vision-item-text { font-family: var(--sans); font-size: 12px; font-weight: 300; color: var(--text-mid); line-height: 1.6; }
+
+  /* ═══ SLIDE 5: WHO'S BEHIND THIS ═══ */
+  .s-about { background: var(--charcoal-deep); display: flex; position: relative; }
+  .s-about::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 25% 50%, rgba(185,160,106,0.035) 0%, transparent 50%); }
+  .about-left { width: 38%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 80px 50px; position: relative; z-index: 1; text-align: center; }
+  .about-left::after { content: ''; position: absolute; top: 50%; right: 0; transform: translateY(-50%); width: 1px; height: 120px; background: var(--gold); }
+  .about-photo { width: 170px; height: 170px; border-radius: 50%; background: var(--charcoal-mid); border: 1px solid rgba(185,160,106,0.10); margin-bottom: 28px; display: flex; align-items: center; justify-content: center; position: relative; }
+  .about-photo::after { content: ''; position: absolute; inset: -10px; border-radius: 50%; border: 1px solid rgba(185,160,106,0.04); }
+  .about-photo-text { font-family: var(--sans); font-size: 9px; font-weight: 500; color: rgba(255,255,255,0.10); letter-spacing: 3px; text-transform: uppercase; }
+  .about-name { font-family: var(--serif); font-size: 28px; font-weight: 400; color: var(--white); margin-bottom: 6px; }
+  .about-title-line { font-family: var(--sans); font-size: 11px; font-weight: 500; color: var(--gold); letter-spacing: 3px; text-transform: uppercase; }
+  .about-icaew { display: inline-block; margin-top: 14px; padding: 6px 16px; border: 1px solid rgba(185,160,106,0.18); border-radius: 2px; font-family: var(--sans); font-size: 9px; font-weight: 600; color: var(--gold); letter-spacing: 2.5px; text-transform: uppercase; }
+  .about-right { width: 62%; display: flex; flex-direction: column; justify-content: center; padding: 65px 65px 65px 55px; position: relative; z-index: 1; }
+  .about-quals { display: flex; flex-direction: column; gap: 18px; margin-bottom: 32px; }
+  .about-qual { display: flex; align-items: flex-start; gap: 16px; }
+  .about-qual-line { width: 18px; height: 1px; background: var(--gold); flex-shrink: 0; margin-top: 11px; }
+  .about-qual-text { font-family: var(--sans); font-size: 14.5px; font-weight: 300; color: rgba(255,255,255,0.50); line-height: 1.6; }
+  .about-divider { width: 40px; height: 1px; background: var(--gold); margin: 0 0 26px; }
+  .about-emphasis { font-family: var(--serif); font-size: 17px; font-weight: 400; font-style: italic; color: var(--gold-light); line-height: 1.65; }
+  .about-selective { font-family: var(--sans); font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.25); letter-spacing: 2px; margin-top: 20px; text-transform: uppercase; }
+
+  /* ═══ SLIDE 6: COMPARISON ═══ */
+  .s-compare { background: var(--charcoal-deep); display: flex; position: relative; overflow: hidden; }
+  .s-compare::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 75% 30%, rgba(185,160,106,0.035) 0%, transparent 55%); }
+  .s-compare::after { content: ''; position: absolute; top: 24px; left: 24px; right: 24px; bottom: 24px; border: 1px solid rgba(185,160,106,0.04); pointer-events: none; }
+  .compare-sidebar { width: 285px; display: flex; flex-direction: column; justify-content: center; padding: 60px 44px; position: relative; z-index: 1; }
+  .compare-sidebar::after { content: ''; position: absolute; top: 50%; right: 0; transform: translateY(-50%); width: 1px; height: 120px; background: var(--gold); }
+  .compare-heading { font-family: var(--serif); font-size: 30px; font-weight: 300; color: var(--white); margin-top: 12px; line-height: 1.3; }
+  .compare-heading em { font-style: italic; color: var(--gold); }
+  .compare-sidebar-text { font-family: var(--sans); font-size: 12px; font-weight: 300; color: rgba(255,255,255,0.25); line-height: 1.8; margin-top: 22px; }
+  .compare-main { flex: 1; padding: 44px 48px 36px; position: relative; z-index: 1; display: flex; flex-direction: column; }
+  .compare-col-headers { display: grid; grid-template-columns: 1fr 30px 1fr; gap: 0; margin-bottom: 6px; }
+  .compare-col-hdr { font-family: var(--sans); font-size: 9px; font-weight: 600; letter-spacing: 3.5px; text-transform: uppercase; padding: 0 0 12px; }
+  .compare-col-hdr.old { color: rgba(200,112,112,0.55); }
+  .compare-col-hdr.new { color: var(--gold); }
+  .compare-rows { flex: 1; display: flex; flex-direction: column; }
+  .compare-row { flex: 1; display: grid; grid-template-columns: 1fr 30px 1fr; gap: 0; border-top: 1px solid rgba(185,160,106,0.05); }
+  .compare-old, .compare-new { padding: 14px 0; display: flex; flex-direction: column; justify-content: center; }
+  .compare-row-label { font-family: var(--serif); font-size: 13px; font-weight: 500; margin-bottom: 7px; }
+  .compare-old .compare-row-label { color: rgba(200,112,112,0.45); }
+  .compare-new .compare-row-label { color: var(--gold); }
+  .compare-old ul, .compare-new ul { list-style: none; }
+  .compare-old li, .compare-new li { font-family: var(--sans); font-size: 11.5px; font-weight: 300; line-height: 1.7; padding: 2px 0 2px 14px; position: relative; }
+  .compare-old li { color: rgba(255,255,255,0.22); }
+  .compare-old li::before { content: ''; position: absolute; left: 0; top: 10px; width: 5px; height: 1px; background: rgba(200,112,112,0.25); }
+  .compare-new li { color: rgba(255,255,255,0.55); font-weight: 400; }
+  .compare-new li::before { content: ''; position: absolute; left: 0; top: 10px; width: 5px; height: 1px; background: var(--gold); }
+  .compare-divider-col { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+  .compare-divider-line { width: 1px; height: 100%; background: rgba(185,160,106,0.08); position: absolute; top: 0; }
+  .compare-divider-arrow { width: 22px; height: 22px; position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; }
+  .compare-divider-arrow svg { width: 14px; height: 14px; }
+  .compare-footer { display: flex; gap: 28px; padding-top: 14px; border-top: 1px solid rgba(185,160,106,0.05); }
+  .compare-stat { display: flex; align-items: center; gap: 10px; }
+  .compare-stat-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--gold); }
+  .compare-stat-label { font-family: var(--sans); font-size: 9px; font-weight: 500; color: rgba(255,255,255,0.20); letter-spacing: 1.5px; text-transform: uppercase; }
+
+  /* ═══ SLIDE 7: CASE STUDIES ═══ */
+  .s-cases { background: var(--charcoal); display: flex; flex-direction: column; padding: 50px 70px; position: relative; }
+  .s-cases::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 80%, rgba(185,160,106,0.025) 0%, transparent 45%); }
+  .cases-header { margin-bottom: 22px; position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: flex-end; }
+  .cases-heading { font-family: var(--serif); font-size: 34px; font-weight: 300; color: var(--white); margin-top: 10px; }
+  .cases-total { text-align: right; }
+  .cases-total-num { font-family: var(--serif); font-size: 36px; font-weight: 300; color: var(--gold); line-height: 1; }
+  .cases-total-lbl { font-family: var(--sans); font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.20); letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
+  .cases-cols { display: flex; gap: 22px; flex: 1; position: relative; z-index: 1; }
+  .cases-card { flex: 1; background: rgba(255,255,255,0.02); border: 1px solid rgba(185,160,106,0.07); border-radius: 3px; overflow: hidden; display: flex; flex-direction: column; transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s; }
+  .cases-card:hover { border-color: rgba(185,160,106,0.2); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,0.2); }
+  .cases-card-header { padding: 18px 22px 14px; border-bottom: 1px solid rgba(185,160,106,0.06); }
+  .cases-card-num { font-family: var(--sans); font-size: 9px; font-weight: 600; color: var(--gold); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; }
+  .cases-card-title { font-family: var(--serif); font-size: 20px; font-weight: 500; color: var(--white); margin-bottom: 2px; }
+  .cases-card-revenue { font-family: var(--sans); font-size: 11px; font-weight: 500; color: var(--gold-dim); }
+  .cases-card-body { padding: 12px 22px; flex: 1; }
+  .cases-detail { display: flex; justify-content: space-between; align-items: baseline; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.025); }
+  .cases-detail:last-child { border-bottom: none; }
+  .cases-detail .l { font-family: var(--sans); font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.20); text-transform: uppercase; letter-spacing: 1px; }
+  .cases-detail .v { font-family: var(--sans); font-size: 11px; font-weight: 400; color: rgba(255,255,255,0.50); text-align: right; max-width: 190px; }
+  .cases-card-result { padding: 14px 22px; background: rgba(185,160,106,0.04); border-top: 1px solid rgba(185,160,106,0.06); text-align: center; }
+  .cases-card-saving { font-family: var(--serif); font-size: 30px; font-weight: 300; color: var(--gold); line-height: 1; margin-bottom: 2px; }
+  .cases-card-saving-label { font-family: var(--sans); font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.25); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
+  .cases-card-bar { width: 100%; height: 5px; border-radius: 3px; background: rgba(255,255,255,0.05); position: relative; overflow: hidden; }
+  .cases-card-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-bright)); width: 0; transition: width 1.2s cubic-bezier(0.23, 1, 0.32, 1) 0.3s; }
+  .cases-card-quote { font-family: var(--serif); font-size: 12px; font-weight: 400; font-style: italic; color: rgba(255,255,255,0.30); margin-top: 8px; line-height: 1.5; }
+
+  /* ═══ SLIDE 8: WHAT'S INCLUDED ═══ */
+  .s-included { background: var(--charcoal-deep); display: flex; position: relative; }
+  .s-included::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 40%, rgba(185,160,106,0.04) 0%, transparent 55%); }
+  .s-included::after { content: ''; position: absolute; top: 24px; left: 24px; right: 24px; bottom: 24px; border: 1px solid rgba(185,160,106,0.04); pointer-events: none; }
+  .included-left { width: 40%; display: flex; flex-direction: column; justify-content: center; padding: 65px 50px 65px 80px; position: relative; z-index: 1; }
+  .included-left::after { content: ''; position: absolute; top: 50%; right: 0; transform: translateY(-50%); width: 1px; height: 140px; background: var(--gold); }
+  .included-heading { font-family: var(--serif); font-size: 34px; font-weight: 300; color: var(--white); line-height: 1.3; margin-top: 10px; }
+  .included-heading em { font-style: italic; color: var(--gold); }
+  .included-subtext { font-family: var(--sans); font-size: 13px; font-weight: 300; color: rgba(255,255,255,0.25); line-height: 1.8; margin-top: 22px; }
+  .included-right { width: 60%; display: flex; flex-direction: column; justify-content: center; padding: 50px 70px 50px 55px; position: relative; z-index: 1; }
+  .included-items { display: flex; flex-direction: column; gap: 0; }
+  .included-item { display: flex; align-items: center; gap: 22px; padding: 17px 0; border-bottom: 1px solid rgba(185,160,106,0.06); }
+  .included-item:first-child { border-top: 1px solid rgba(185,160,106,0.06); }
+  .included-check { width: 28px; height: 28px; border-radius: 50%; border: 1px solid rgba(185,160,106,0.20); display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: rgba(185,160,106,0.03); }
+  .included-check svg { width: 12px; height: 12px; }
+  .included-item-content { flex: 1; }
+  .included-item-title { font-family: var(--serif); font-size: 16px; font-weight: 500; color: var(--white); margin-bottom: 2px; }
+  .included-item-text { font-family: var(--sans); font-size: 11.5px; font-weight: 300; color: rgba(255,255,255,0.35); line-height: 1.5; }
+
+  /* ═══ SLIDE 9: THE CLOSE ═══ */
+  .s-close { background: var(--charcoal-deep); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; }
+  .s-close::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 40%, rgba(185,160,106,0.07) 0%, transparent 50%); }
+  .s-close::after { content: ''; position: absolute; top: 24px; left: 24px; right: 24px; bottom: 24px; border: 1px solid rgba(185,160,106,0.05); pointer-events: none; }
+  .close-accent { width: 50px; height: 1px; background: var(--gold); margin-bottom: 30px; position: relative; z-index: 1; }
+  .close-question { font-family: var(--serif); font-size: 44px; font-weight: 300; color: var(--white); line-height: 1.22; position: relative; z-index: 1; max-width: 700px; }
+  .close-question em { font-style: italic; color: var(--gold); }
+  .close-subtext { font-family: var(--sans); font-size: 14.5px; font-weight: 300; color: rgba(255,255,255,0.35); margin-top: 24px; position: relative; z-index: 1; line-height: 1.8; max-width: 520px; }
+  .close-roi { display: inline-block; font-family: var(--sans); font-size: 13px; font-weight: 500; color: var(--gold); margin-top: 28px; position: relative; z-index: 1; letter-spacing: 0.5px; padding: 10px 24px; border: 1px solid rgba(185,160,106,0.2); border-radius: 2px; background: rgba(185,160,106,0.04); }
+  .close-scarcity { font-family: var(--sans); font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.18); letter-spacing: 3px; text-transform: uppercase; margin-top: 24px; position: relative; z-index: 1; }
+  .close-contact-row { display: flex; gap: 40px; margin-top: 36px; position: relative; z-index: 1; }
+  .close-contact-item { display: flex; align-items: center; gap: 12px; }
+  .close-contact-key { font-family: var(--sans); font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.18); letter-spacing: 2px; text-transform: uppercase; }
+  .close-contact-val { font-family: var(--sans); font-size: 14px; font-weight: 300; color: rgba(255,255,255,0.50); }
+  .close-logo { font-family: var(--serif); font-size: 13px; font-weight: 300; color: rgba(255,255,255,0.06); letter-spacing: 6px; text-transform: uppercase; margin-top: 24px; position: relative; z-index: 1; }
+  .close-logo span { color: rgba(185,160,106,0.12); }
+  .close-conf { font-family: var(--sans); font-size: 9px; font-weight: 400; color: rgba(255,255,255,0.08); letter-spacing: 3px; text-transform: uppercase; margin-top: 8px; position: relative; z-index: 1; }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<div class="nav-dots" id="navDots"></div>
+<div class="kb-hint" id="kbHint">Scroll or use arrow keys to navigate</div>
+
+<!-- ═══ SLIDE 1: COVER ═══ -->
+<div class="slide" id="s0">
+<div class="slide-inner s-cover">
+  <svg class="cover-map" viewBox="0 0 1000 500" fill="none">
+    <g stroke="rgba(185,160,106,0.6)" stroke-width="0.8" fill="rgba(185,160,106,0.03)">
+      <path d="M150,120 C160,100 180,85 210,80 C240,75 260,70 280,82 C290,88 285,95 275,100 C268,104 260,100 255,108 C250,115 260,125 250,135 C240,142 230,150 225,160 C220,170 210,180 200,185 C190,190 180,188 170,180 C162,172 155,160 150,150 C145,140 142,130 150,120Z"/>
+      <path d="M240,240 C245,230 255,225 260,235 C265,245 270,260 275,275 C278,290 280,310 275,330 C270,345 260,360 250,365 C240,368 235,355 238,340 C240,325 235,310 232,295 C230,280 232,260 240,240Z"/>
+      <path d="M450,95 C460,88 475,85 490,90 C500,94 505,100 500,108 C496,114 488,118 480,122 C472,126 462,128 455,124 C448,120 444,110 450,95Z"/>
+      <path d="M460,160 C470,150 485,148 495,155 C505,162 510,175 512,190 C514,210 510,230 505,248 C500,262 490,272 478,275 C466,278 458,268 455,255 C452,240 450,220 452,200 C454,180 456,168 460,160Z"/>
+      <path d="M540,75 C560,68 590,65 620,70 C650,75 680,85 700,100 C715,112 725,128 720,140 C712,155 695,158 680,155 C660,150 640,160 625,155 C610,150 600,138 585,130 C570,122 555,115 545,105 C535,95 530,82 540,75Z"/>
+      <path d="M720,280 C735,272 755,270 770,278 C785,286 792,300 788,315 C784,328 770,335 755,332 C740,329 728,318 724,305 C720,292 715,285 720,280Z"/>
+      <path d="M438,92 C440,88 444,86 447,89 C449,92 448,96 445,98 C442,100 437,97 438,92Z"/>
+    </g>
+    <g stroke="rgba(185,160,106,0.15)" stroke-width="0.5" stroke-dasharray="4,6">
+      <line x1="230" y1="140" x2="445" y2="95"/><line x1="445" y1="95" x2="620" y2="100"/>
+      <line x1="620" y1="100" x2="750" y2="290"/><line x1="445" y1="95" x2="480" y2="200"/>
+    </g>
+    <g fill="rgba(185,160,106,0.4)"><circle cx="230" cy="140" r="3"/><circle cx="445" cy="95" r="3.5"/><circle cx="480" cy="200" r="3"/><circle cx="620" cy="100" r="3"/><circle cx="750" cy="290" r="2.5"/></g>
+    <circle class="map-pulse" cx="445" cy="95" r="8" fill="none" stroke="rgba(185,160,106,0.15)" stroke-width="0.5"/>
+    <circle class="map-pulse p2" cx="480" cy="200" r="7" fill="none" stroke="rgba(185,160,106,0.12)" stroke-width="0.5"/>
+    <circle class="map-pulse p3" cx="620" cy="100" r="7" fill="none" stroke="rgba(185,160,106,0.12)" stroke-width="0.5"/>
+  </svg>
+  <div class="cover-logo anim">LSJ Tax<span>.</span></div>
+  <div class="cover-accent anim d1"></div>
+  <div class="cover-title anim d2">What would you do with<br>an extra <em>&pound;100,000</em> a year?</div>
+  <div class="cover-subtitle anim d3">Most online entrepreneurs are paying significantly more tax than they are legally required to. We fix that.</div>
+  <div class="cover-social-proof anim d5">
+    <div class="cover-stat"><div class="cover-stat-num">100+</div><div class="cover-stat-lbl">Clients Relocated</div></div>
+    <div class="cover-stat"><div class="cover-stat-num">25+</div><div class="cover-stat-lbl">Jurisdictions</div></div>
+    <div class="cover-stat"><div class="cover-stat-num">ICAEW</div><div class="cover-stat-lbl">Chartered</div></div>
+  </div>
+  <div class="brand-mark">LSJ Tax</div>
+  <div class="page-num">01</div>
+</div>
+</div>
+
+<!-- ═══ SLIDE 2: THE PROBLEM ═══ -->
+<div class="slide" id="s1">
+<div class="slide-inner s-wrong">
+  <div class="wrong-left">
+    <div class="section-label anim">The Misconception</div>
+    <div class="wrong-heading anim d1">Why most people<br>get international<br>tax <em>wrong.</em></div>
+    <div class="wrong-subtext anim d2">The internet is full of unqualified people selling "zero tax" structures. Most of them have never sat a professional exam. When their structures collapse under audit, you are the one with the liability.</div>
+  </div>
+  <div class="wrong-right">
+    <div class="wrong-misconceptions">
+      <div class="wrong-item anim d2"><div class="wrong-x-circle"><div class="wrong-x">&times;</div></div><div class="wrong-text">"Just open an offshore company"</div></div>
+      <div class="wrong-item anim d3"><div class="wrong-x-circle"><div class="wrong-x">&times;</div></div><div class="wrong-text">"Move abroad and you're free"</div></div>
+      <div class="wrong-item anim d4"><div class="wrong-x-circle"><div class="wrong-x">&times;</div></div><div class="wrong-text">"You'll pay zero tax"</div></div>
+    </div>
+    <div class="wrong-diagram-wrap anim d5">
+      <div class="wrong-diagram-label">How tax liability is actually determined</div>
+      <div class="wrong-diagram">
+        <div class="wrong-node"><div class="wrong-node-circle"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(185,160,106,0.45)" stroke-width="1.2" width="24" height="24"><circle cx="12" cy="8" r="3.5"/><path d="M6 20c0-3.5 2.5-5.5 6-5.5s6 2 6 5.5"/></svg></div><div class="wrong-node-label">Person</div></div>
+        <svg class="wrong-arrow-svg" width="40" height="20" viewBox="0 0 40 20"><path d="M4 10h28M28 5l6 5-6 5" stroke="rgba(185,160,106,0.25)" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="wrong-node"><div class="wrong-node-circle"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(185,160,106,0.45)" stroke-width="1.2" width="24" height="24"><rect x="5" y="10" width="14" height="10" rx="1"/><path d="M12 4v6M8 10V7M16 10V7"/></svg></div><div class="wrong-node-label">Company</div></div>
+        <svg class="wrong-arrow-svg" width="40" height="20" viewBox="0 0 40 20"><path d="M4 10h28M28 5l6 5-6 5" stroke="rgba(185,160,106,0.25)" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="wrong-node"><div class="wrong-node-circle"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(185,160,106,0.45)" stroke-width="1.2" width="24" height="24"><circle cx="12" cy="12" r="8"/><path d="M12 4c-2.5 2.5-2.5 8 0 8s2.5 5.5 0 8"/><path d="M4 12h16"/></svg></div><div class="wrong-node-label">Country</div></div>
+        <svg class="wrong-arrow-svg" width="40" height="20" viewBox="0 0 40 20"><path d="M4 10h28M28 5l6 5-6 5" stroke="rgba(185,160,106,0.25)" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="wrong-node"><div class="wrong-node-circle"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(185,160,106,0.45)" stroke-width="1.2" width="24" height="24"><path d="M5 7h14M5 11h14M5 15h10M5 19h6"/></svg></div><div class="wrong-node-label">Tax Authority</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="brand-mark">LSJ Tax</div>
+  <div class="page-num">02</div>
+</div>
+</div>
+
+<!-- ═══ SLIDE 3: WHAT'S AT STAKE ═══ -->
+<div class="slide" id="s2">
+<div class="slide-inner s-stake">
+  <div class="stake-header">
+    <div class="section-label anim">The Numbers</div>
+    <div class="stake-heading anim d1">What You Are Currently Paying</div>
+  </div>
+  <div class="stake-cols">
+    <div class="stake-col anim d2">
+      <div class="lbl">Every Year You Delay</div>
+      <div class="num red" data-count="100" data-prefix="&pound;" data-suffix="K+">0</div>
+      <div class="per-month">That's &pound;8,300+ leaving your account every month</div>
+      <div class="desc">Total tax liability on a &pound;300K business at UK marginal rates. Corporation tax, income tax, NICs and dividend tax combined.</div>
+    </div>
+    <div class="stake-col anim d3">
+      <div class="lbl">Over Five Years</div>
+      <div class="num red" data-count="500" data-prefix="&pound;" data-suffix="K+">0</div>
+      <div class="per-month">Half a million pounds to HMRC</div>
+      <div class="desc">Cumulative tax paid that could have been legally reduced with the right structure and residency in place.</div>
+    </div>
+    <div class="stake-col anim d4">
+      <div class="lbl">With the Right Structure</div>
+      <div class="num gold">0-5%</div>
+      <div class="per-month" style="color: rgba(185,160,106,0.5);">Compliant. Defensible. Permanent.</div>
+      <div class="desc">Effective tax rate. Legitimate structure, proper residency, full documentation. Built to survive scrutiny.</div>
+    </div>
+  </div>
+  <div class="stake-bottom anim d5">
+    <p>The advisory fee pays for itself <strong>within the first month</strong> of your new structure being live. Every month you wait is another &pound;8,000+ in tax you are not legally required to pay.</p>
+  </div>
+  <div class="brand-mark">LSJ Tax</div>
+  <div class="page-num">03</div>
+</div>
+</div>
+
+<!-- ═══ SLIDE 4: THE VISION ═══ -->
+<div class="slide" id="s3">
+<div class="slide-inner s-vision">
+  <div class="vision-left">
+    <div class="section-label anim" style="color: var(--gold);">The Outcome</div>
+    <div class="vision-heading anim d1">What life looks like<br>on the <em>other side.</em></div>
+    <div class="vision-text anim d2">This is not about moving to a tax haven. It is about building a legitimate structure around your life that means you keep more of what you earn - legally, permanently, and with full peace of mind.</div>
+  </div>
+  <div class="vision-right">
+    <div class="vision-items">
+      <div class="vision-item anim d2">
+        <div class="vision-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.2"><path d="M12 22s7-3.5 7-9V6.5l-7-2.5-7 2.5V13c0 5.5 7 9 7 9z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <div class="vision-item-content">
+          <div class="vision-item-title">Legally Defensible</div>
+          <div class="vision-item-text">A structure that survives scrutiny from HMRC, IRS and any international tax authority. No grey areas.</div>
+        </div>
+      </div>
+      <div class="vision-item anim d3">
+        <div class="vision-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.2"><circle cx="12" cy="12" r="8"/><path d="M12 4c-2.5 2.5-2.5 8 0 8s2.5 5.5 0 8"/><path d="M4 12h16"/></svg></div>
+        <div class="vision-item-content">
+          <div class="vision-item-title">Live Where You Choose</div>
+          <div class="vision-item-text">Your residency plan supports your lifestyle. Work from anywhere without creating unexpected tax liabilities.</div>
+        </div>
+      </div>
+      <div class="vision-item anim d4">
+        <div class="vision-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.2"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/><path d="M7 14h4"/></svg></div>
+        <div class="vision-item-content">
+          <div class="vision-item-title">Keep More of What You Earn</div>
+          <div class="vision-item-text">Effective tax rates of 0-5%. The difference compounds into real wealth over time.</div>
+        </div>
+      </div>
+      <div class="vision-item anim d5">
+        <div class="vision-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg></div>
+        <div class="vision-item-content">
+          <div class="vision-item-title">Complete Peace of Mind</div>
+          <div class="vision-item-text">Every filing handled, every deadline met, every jurisdiction covered. You focus on your business.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="brand-mark brand-mark-dark">LSJ Tax</div>
+  <div class="page-num page-num-dark">04</div>
+</div>
+</div>
+
+<!-- ═══ SLIDE 5: WHO'S BEHIND THIS ═══ -->
+<div class="slide" id="s4">
+<div class="slide-inner s-about">
+  <div class="about-left">
+    <div class="section-label anim">Lead Advisor</div>
+    <div class="about-photo anim d1"><div class="about-photo-text">Photo</div></div>
+    <div class="about-name anim d2">[Name]</div>
+    <div class="about-title-line anim d3">ICAEW Chartered Accountant</div>
+    <div class="about-icaew anim d4">Regulated by ICAEW</div>
+  </div>
+  <div class="about-right">
+    <div class="about-quals">
+      <div class="about-qual anim d2"><div class="about-qual-line"></div><div class="about-qual-text">Associate Chartered Accountant - one of very few qualified professionals advising in this space</div></div>
+      <div class="about-qual anim d3"><div class="about-qual-line"></div><div class="about-qual-text">Specialist in international tax structuring for online businesses across 25+ jurisdictions</div></div>
+      <div class="about-qual anim d4"><div class="about-qual-line"></div><div class="about-qual-text">Trained at a leading UK corporate firm - not a self-taught "tax advisor" or offshore agent</div></div>
+      <div class="about-qual anim d5"><div class="about-qual-line"></div><div class="about-qual-text">100+ successful international exits. Every structure built to withstand HMRC, IRS and international tax authority scrutiny</div></div>
+    </div>
+    <div class="about-divider anim d6"></div>
+    <div class="about-emphasis anim d6">"Most people selling international tax advice are not qualified accountants. That matters when your structure is under audit."</div>
+    <div class="about-selective anim d7">We take on a limited number of clients each quarter</div>
+  </div>
+  <div class="brand-mark">LSJ Tax</div>
+  <div class="page-num">05</div>
+</div>
+</div>
+
+<!-- ═══ SLIDE 6: COMPARISON ═══ -->
+<div class="slide" id="s5">
+<div class="slide-inner s-compare">
+  <div class="compare-sidebar">
+    <div class="section-label anim">The Difference</div>
+    <div class="compare-heading anim d1">Where most<br>people run<br>into <em>problems.</em></div>
+    <div class="compare-sidebar-text anim d2">Most "advisors" in this space have no professional qualifications. They sell structures. We build defensible positions.</div>
+  </div>
+  <div class="compare-main">
+    <div class="compare-col-headers anim d2">
+      <div class="compare-col-hdr old">Unqualified Setup Agents</div>
+      <div class="compare-col-hdr"></div>
+      <div class="compare-col-hdr new">Qualified Advisory</div>
+    </div>
+    <div class="compare-rows">
+      <div class="compare-row anim d3">
+        <div class="compare-old"><div class="compare-row-label">Qualifications</div><ul><li>No professional accounting qualification</li><li>Self-taught or sales background</li></ul></div>
+        <div class="compare-divider-col"><div class="compare-divider-line"></div><div class="compare-divider-arrow"><svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M8 4l3 3-3 3" stroke="#b9a06a" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="compare-new"><div class="compare-row-label">Qualifications</div><ul><li>ICAEW Chartered Accountant</li><li>Trained at a leading UK corporate firm</li></ul></div>
+      </div>
+      <div class="compare-row anim d4">
+        <div class="compare-old"><div class="compare-row-label">Approach</div><ul><li>Cookie-cutter structures, same for everyone</li><li>No residency analysis, no substance planning</li></ul></div>
+        <div class="compare-divider-col"><div class="compare-divider-line"></div><div class="compare-divider-arrow"><svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M8 4l3 3-3 3" stroke="#b9a06a" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="compare-new"><div class="compare-row-label">Approach</div><ul><li>Bespoke structure around your situation</li><li>Full residency analysis, audit-ready documentation</li></ul></div>
+      </div>
+      <div class="compare-row anim d5">
+        <div class="compare-old"><div class="compare-row-label">Accountability</div><ul><li>No ongoing support after setup</li><li>Nobody to call when your tax authority writes to you</li></ul></div>
+        <div class="compare-divider-col"><div class="compare-divider-line"></div><div class="compare-divider-arrow"><svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M8 4l3 3-3 3" stroke="#b9a06a" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="compare-new"><div class="compare-row-label">Accountability</div><ul><li>Ongoing compliance, filings and annual reviews</li><li>One qualified advisor, full accountability, year after year</li></ul></div>
+      </div>
+    </div>
+    <div class="compare-footer anim d6">
+      <div class="compare-stat"><div class="compare-stat-dot"></div><div class="compare-stat-label">ICAEW Chartered</div></div>
+      <div class="compare-stat"><div class="compare-stat-dot"></div><div class="compare-stat-label">25+ Jurisdictions</div></div>
+      <div class="compare-stat"><div class="compare-stat-dot"></div><div class="compare-stat-label">100+ Exits</div></div>
+      <div class="compare-stat"><div class="compare-stat-dot"></div><div class="compare-stat-label">Audit-Ready</div></div>
+    </div>
+  </div>
+  <div class="brand-mark">LSJ Tax</div>
+  <div class="page-num">06</div>
+</div>
+</div>
+
+<!-- ═══ SLIDE 7: CASE STUDIES ═══ -->
+<div class="slide" id="s6">
+<div class="slide-inner s-cases">
+  <div class="cases-header">
+    <div>
+      <div class="section-label anim">Client Results</div>
+      <div class="cases-heading anim d1">Case Studies</div>
+    </div>
+    <div class="cases-total anim d1">
+      <div class="cases-total-num">&pound;265K+</div>
+      <div class="cases-total-lbl">Combined Annual Savings</div>
+    </div>
+  </div>
+  <div class="cases-cols">
+    <div class="cases-card anim d2">
+      <div class="cases-card-header">
+        <div class="cases-card-num">Case Study 01</div>
+        <div class="cases-card-title">E-commerce Brand</div>
+        <div class="cases-card-revenue">~&pound;350K annual revenue</div>
+      </div>
+      <div class="cases-card-body">
+        <div class="cases-detail"><span class="l">From</span><span class="v">United Kingdom</span></div>
+        <div class="cases-detail"><span class="l">To</span><span class="v">Dubai, UAE</span></div>
+        <div class="cases-detail"><span class="l">Structure</span><span class="v">UAE free zone + UK exit</span></div>
+      </div>
+      <div class="cases-card-result">
+        <div class="cases-card-saving">&pound;73K</div>
+        <div class="cases-card-saving-label">Saved Per Year</div>
+        <div class="cases-card-bar"><div class="cases-card-bar-fill" data-width="81"></div></div>
+        <div class="cases-card-quote">"Should have done this two years ago."</div>
+      </div>
+    </div>
+    <div class="cases-card anim d3">
+      <div class="cases-card-header">
+        <div class="cases-card-num">Case Study 02</div>
+        <div class="cases-card-title">SaaS Founder</div>
+        <div class="cases-card-revenue">~&pound;500K annual revenue</div>
+      </div>
+      <div class="cases-card-body">
+        <div class="cases-detail"><span class="l">From</span><span class="v">United Kingdom</span></div>
+        <div class="cases-detail"><span class="l">To</span><span class="v">Portugal (NHR)</span></div>
+        <div class="cases-detail"><span class="l">Structure</span><span class="v">Irish HoldCo + PT residency</span></div>
+      </div>
+      <div class="cases-card-result">
+        <div class="cases-card-saving">&pound;125K</div>
+        <div class="cases-card-saving-label">Saved Per Year</div>
+        <div class="cases-card-bar"><div class="cases-card-bar-fill" data-width="63"></div></div>
+        <div class="cases-card-quote">"The only advisor who actually understood the full picture."</div>
+      </div>
+    </div>
+    <div class="cases-card anim d4">
+      <div class="cases-card-header">
+        <div class="cases-card-num">Case Study 03</div>
+        <div class="cases-card-title">Digital Agency</div>
+        <div class="cases-card-revenue">~&pound;250K annual revenue</div>
+      </div>
+      <div class="cases-card-body">
+        <div class="cases-detail"><span class="l">From</span><span class="v">Australia</span></div>
+        <div class="cases-detail"><span class="l">To</span><span class="v">Singapore</span></div>
+        <div class="cases-detail"><span class="l">Structure</span><span class="v">SG PTE Ltd + substance</span></div>
+      </div>
+      <div class="cases-card-result">
+        <div class="cases-card-saving">&pound;67K</div>
+        <div class="cases-card-saving-label">Saved Per Year</div>
+        <div class="cases-card-bar"><div class="cases-card-bar-fill" data-width="73"></div></div>
+        <div class="cases-card-quote">"Night and day compared to the last firm I used."</div>
+      </div>
+    </div>
+  </div>
+  <div class="brand-mark">LSJ Tax</div>
+  <div class="page-num">07</div>
+</div>
+</div>
+
+<!-- ═══ SLIDE 8: WHAT'S INCLUDED ═══ -->
+<div class="slide" id="s7">
+<div class="slide-inner s-included">
+  <div class="included-left">
+    <div class="section-label anim">Your Engagement</div>
+    <div class="included-heading anim d1">What's <em>included.</em></div>
+    <div class="included-subtext anim d2">A single engagement, end to end. From strategy through to ongoing compliance. One advisor, one relationship, total accountability.</div>
+  </div>
+  <div class="included-right">
+    <div class="included-items">
+      <div class="included-item anim d1">
+        <div class="included-check"><svg viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-6" stroke="#b9a06a" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="included-item-content">
+          <div class="included-item-title">Bespoke International Tax Strategy</div>
+          <div class="included-item-text">Full report covering residency, structure, compliance and risk - tailored to your situation</div>
+        </div>
+      </div>
+      <div class="included-item anim d2">
+        <div class="included-check"><svg viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-6" stroke="#b9a06a" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="included-item-content">
+          <div class="included-item-title">Company Formation & Structuring</div>
+          <div class="included-item-text">Entity setup in the right jurisdiction with proper substance and documentation</div>
+        </div>
+      </div>
+      <div class="included-item anim d3">
+        <div class="included-check"><svg viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-6" stroke="#b9a06a" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="included-item-content">
+          <div class="included-item-title">Personal Residency & Relocation Plan</div>
+          <div class="included-item-text">Step-by-step roadmap for establishing tax residency in your chosen jurisdiction</div>
+        </div>
+      </div>
+      <div class="included-item anim d4">
+        <div class="included-check"><svg viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-6" stroke="#b9a06a" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="included-item-content">
+          <div class="included-item-title">Banking & Substance Setup</div>
+          <div class="included-item-text">Corporate banking, registered address and operational substance to support your position</div>
+        </div>
+      </div>
+      <div class="included-item anim d5">
+        <div class="included-check"><svg viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-6" stroke="#b9a06a" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="included-item-content">
+          <div class="included-item-title">Ongoing Compliance & Annual Review</div>
+          <div class="included-item-text">Tax filings, deadline management and proactive reviews across every jurisdiction</div>
+        </div>
+      </div>
+      <div class="included-item anim d6">
+        <div class="included-check"><svg viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-6" stroke="#b9a06a" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="included-item-content">
+          <div class="included-item-title">Direct Access to Your Advisor</div>
+          <div class="included-item-text">One qualified chartered accountant managing your entire international position</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="brand-mark">LSJ Tax</div>
+  <div class="page-num">08</div>
+</div>
+</div>
+
+<!-- ═══ SLIDE 9: THE CLOSE ═══ -->
+<div class="slide" id="s8">
+<div class="slide-inner s-close">
+  <div class="section-label anim" style="position:relative;z-index:1;">Next Step</div>
+  <div class="close-accent anim d1"></div>
+  <div class="close-question anim d2">The only question is<br><em>how much longer</em> you wait.</div>
+  <div class="close-subtext anim d3">Your next step is a strategy call. We review your situation, identify the opportunity, and show you exactly what your structure would look like.</div>
+  <div class="close-roi anim d4">Clients typically save 5-20x the advisory fee in the first year alone.</div>
+  <div class="close-scarcity anim d5">Limited capacity - we take on a small number of new clients each quarter</div>
+  <div class="close-contact-row anim d6">
+    <div class="close-contact-item"><div class="close-contact-key">Name</div><div class="close-contact-val">[Name]</div></div>
+    <div class="close-contact-item"><div class="close-contact-key">Email</div><div class="close-contact-val">[email]</div></div>
+    <div class="close-contact-item"><div class="close-contact-key">Web</div><div class="close-contact-val">[website]</div></div>
+  </div>
+  <div class="close-logo anim d7">LSJ Tax<span>.</span></div>
+  <div class="close-conf anim d8">Private & Confidential</div>
+  <div class="brand-mark">LSJ Tax</div>
+  <div class="page-num">09</div>
+</div>
+</div>
+
+<script>
+// Slide visibility
+const obs = new IntersectionObserver(e => e.forEach(s => {
+  if (s.isIntersecting) s.target.classList.add('visible');
+}), { threshold: 0.15 });
+document.querySelectorAll('.slide-inner').forEach(s => obs.observe(s));
+
+// Bar fills
+const barObs = new IntersectionObserver(e => e.forEach(s => {
+  if (s.isIntersecting) s.target.querySelectorAll('.cases-card-bar-fill').forEach(b => { b.style.width = b.dataset.width + '%'; });
+}), { threshold: 0.3 });
+document.querySelectorAll('.s-cases').forEach(s => barObs.observe(s));
+
+// Number counters
+const countObs = new IntersectionObserver(e => e.forEach(s => {
+  if (s.isIntersecting && !s.target.dataset.counted) {
+    s.target.dataset.counted = '1';
+    s.target.querySelectorAll('.num[data-count]').forEach(el => {
+      const target = parseInt(el.dataset.count);
+      const prefix = el.dataset.prefix || '';
+      const suffix = el.dataset.suffix || '';
+      const duration = 1200;
+      const startTime = performance.now();
+      function tick(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.innerHTML = prefix + Math.round(target * eased) + suffix;
+        if (progress < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    });
+  }
+}), { threshold: 0.3 });
+document.querySelectorAll('.s-stake').forEach(s => countObs.observe(s));
+
+// Nav dots
+const slides = document.querySelectorAll('.slide');
+const dotsContainer = document.getElementById('navDots');
+slides.forEach((_, i) => {
+  const dot = document.createElement('div');
+  dot.className = 'nav-dot';
+  dot.addEventListener('click', () => slides[i].scrollIntoView({ behavior: 'smooth' }));
+  dotsContainer.appendChild(dot);
+});
+const dots = dotsContainer.querySelectorAll('.nav-dot');
+const dotObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const idx = Array.from(slides).indexOf(e.target);
+      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    }
+  });
+}, { threshold: 0.5 });
+slides.forEach(s => dotObs.observe(s));
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (['ArrowDown','ArrowRight',' '].includes(e.key)) {
+    e.preventDefault();
+    const c = Array.from(slides).findIndex(s => { const r = s.getBoundingClientRect(); return r.top >= -100 && r.top < window.innerHeight/2; });
+    if (c < slides.length-1) slides[c+1].scrollIntoView({ behavior: 'smooth' });
+  }
+  if (['ArrowUp','ArrowLeft'].includes(e.key)) {
+    e.preventDefault();
+    const c = Array.from(slides).findIndex(s => { const r = s.getBoundingClientRect(); return r.top >= -100 && r.top < window.innerHeight/2; });
+    if (c > 0) slides[c-1].scrollIntoView({ behavior: 'smooth' });
+  }
+});
+
+// Hide hint
+let hh = false;
+window.addEventListener('scroll', () => { if (!hh && window.scrollY > 50) { document.getElementById('kbHint').style.opacity = '0'; hh = true; } }, { passive: true });
+</script>
+
+</body>
+</html>
